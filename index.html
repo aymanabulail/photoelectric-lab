@@ -432,11 +432,11 @@ function updateSim() {
   const current = emitting ? (intensity/100*f14*2).toFixed(2) : '0';
   simState = {freq:f14,intensity,emitting,Ephoton,Kmax,Vs:parseFloat(Vs),current};
 
-  document.getElementById('freqVal').textContent = f14.toFixed(2)+' × 10¹⁴ Hz';
+  document.getElementById('freqVal').textContent = f14.toFixed(2)+' \u00d7 10\u00b9\u2074 Hz';
   document.getElementById('waveVal').textContent = nm+' nm';
   document.getElementById('intVal').textContent = intensity+'%';
   document.getElementById('stopVal').textContent = emitting ? Vs+' V' : '—';
-  document.getElementById('currVal').textContent = emitting ? current+' µA' : '—';
+  document.getElementById('currVal').textContent = emitting ? current+' \u00b5A' : '—';
   document.getElementById('mEph').textContent = Ephoton.toFixed(3);
   document.getElementById('mPhi').textContent = phi.toFixed(2);
   document.getElementById('mKmax').textContent = emitting ? Kmax.toFixed(3) : '0';
@@ -609,7 +609,7 @@ function drawPlot(){
   ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,H-pad.b);ctx.lineTo(W-pad.r,H-pad.b);ctx.stroke();
   const axc=isDark?'#999':'#666';
   ctx.fillStyle=axc;ctx.font='11px IBM Plex Sans,sans-serif';ctx.textAlign='center';
-  ctx.fillText('Frequency (×10¹⁴ Hz)',W/2,H-4);
+  ctx.fillText('Frequency (\u00d710\u00b9\u2074 Hz)',W/2,H-4);
   ctx.save();ctx.translate(14,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('Stopping potential (V)',0,0);ctx.restore();
 
   const n=pts.length,sumF=pts.reduce((s,p)=>s+p.f,0),sumV=pts.reduce((s,p)=>s+p.v,0);
@@ -630,10 +630,10 @@ function drawPlot(){
   const pErr=Math.abs((h_exp-6.626e-34)/6.626e-34*100).toFixed(2);
   const reg=document.getElementById('regResult');
   reg.style.display='block';
-  reg.innerHTML='Slope = h/e = <b>'+slope.toFixed(4)+' × 10⁻¹⁵ V·s</b><br>'+
-    'y-intercept = −φ/e = <b>'+intercept.toFixed(3)+' V</b>  →  φ = <b>'+(−intercept).toFixed(3)+' eV</b><br>'+
-    'h<sub>exp</sub> = slope × e = <b>'+h_exp.toExponential(3)+' J·s</b><br>'+
-    'h<sub>accepted</sub> = 6.626 × 10⁻³⁴ J·s  |  Percent error = <b>'+pErr+'%</b>';
+  reg.innerHTML='Slope = h/e = <b>'+slope.toFixed(4)+' \u00d7 10\u207b\u00b9\u2075 V·s</b><br>'+
+    'y-intercept = \u2212\u03c6/e = <b>'+intercept.toFixed(3)+' V</b>  \u2192  \u03c6 = <b>'+(-intercept).toFixed(3)+' eV</b><br>'+
+    'h<sub>exp</sub> = slope \u00d7 e = <b>'+h_exp.toExponential(3)+' J·s</b><br>'+
+    'h<sub>accepted</sub> = 6.626 \u00d7 10\u207b\u00b3\u2074 J·s  |  Percent error = <b>'+pErr+'%</b>';
 }
 
 function calcMetalTable(){
@@ -652,12 +652,12 @@ function calcMetalTable(){
 }
 
 const hints={
-  1:'Key points: K_max = hf − φ, where hf = photon energy, φ = work function (minimum energy to release an electron). K_max ≥ 0 only when hf ≥ φ. Emission is instantaneous; no time delay.',
-  2:'f₀ = φ/h (threshold frequency). The stopping potential V_s satisfies eV_s = K_max. The V_s vs. f graph is linear: slope = h/e (same for all metals), y-intercept = −φ/e (metal-dependent).',
-  3:'Quantum: (1) no emission below f₀ regardless of intensity; (2) K_max = hf − φ, independent of intensity; (3) instantaneous emission. Classical wave model fails all three. Einstein 1905 treated light as quanta.',
-  4:'λ₀ = hc/φ. Na: 540 nm, K: 540 nm, Cs: 592 nm, Zn: 289 nm, Pt: 220 nm. Na, K, Cs lie in visible range. Pt requires UV because its large work function (5.65 eV) requires photons with λ < 220 nm.',
-  5:'h = slope × e = 4.124×10⁻¹⁵ × 1.602×10⁻¹⁹ = 6.607×10⁻³⁴ J·s. % error = |6.607−6.626|/6.626 × 100 ≈ 0.29%. Systematic errors: contact potential between metals, surface contamination, stray light.',
-  6:'p = h/λ = 6.626×10⁻³⁴/200×10⁻⁹ = 3.31×10⁻²⁷ kg·m/s. K_max = hc/λ − φ = 6.21−2.30 = 3.91 eV. v_max = √(2K/m_e) ≈ 1.17×10⁶ m/s. v/c ≈ 0.004, so non-relativistic treatment is valid.'
+  1:'Key points: K_max = hf \u2212 \u03c6, where hf = photon energy, \u03c6 = work function (minimum energy to release an electron). K_max ≥ 0 only when hf ≥ \u03c6. Emission is instantaneous; no time delay.',
+  2:'f\u2080 = \u03c6/h (threshold frequency). The stopping potential V_s satisfies eV_s = K_max. The V_s vs. f graph is linear: slope = h/e (same for all metals), y-intercept = \u2212\u03c6/e (metal-dependent).',
+  3:'Quantum: (1) no emission below f\u2080 regardless of intensity; (2) K_max = hf \u2212 \u03c6, independent of intensity; (3) instantaneous emission. Classical wave model fails all three. Einstein 1905 treated light as quanta.',
+  4:'\u03bb\u2080 = hc/\u03c6. Na: 540 nm, K: 540 nm, Cs: 592 nm, Zn: 289 nm, Pt: 220 nm. Na, K, Cs lie in visible range. Pt requires UV because its large work function (5.65 eV) requires photons with \u03bb < 220 nm.',
+  5:'h = slope \u00d7 e = 4.124\u00d710\u207b\u00b9\u2075 \u00d7 1.602\u00d710\u207b\u00b9\u2079 = 6.607\u00d710\u207b\u00b3\u2074 J·s. % error = |6.607\u22126.626|/6.626 \u00d7 100 ≈ 0.29%. Systematic errors: contact potential between metals, surface contamination, stray light.',
+  6:'p = h/\u03bb = 6.626\u00d710\u207b\u00b3\u2074/200\u00d710\u207b\u2079 = 3.31\u00d710\u207b\u00b2\u2077 kg·m/s. K_max = hc/\u03bb \u2212 \u03c6 = 6.21\u22122.30 = 3.91 eV. v_max = √(2K/m_e) ≈ 1.17\u00d710\u2076 m/s. v/c ≈ 0.004, so non-relativistic treatment is valid.'
 };
 
 function checkPQ(n){
