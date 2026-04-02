@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photoelectric Effect — Virtual Laboratory</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f2;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --border: rgba(0,0,0,0.1);
+  --border2: rgba(0,0,0,0.18);
+  --text: #1a1a18;
+  --text2: #5a5a54;
+  --text3: #9a9a90;
+  --purple-bg: #EEEDFE; --purple: #3C3489;
+  --teal-bg: #E1F5EE; --teal: #085041;
+  --blue-bg: #E6F1FB; --blue: #0C447C; --blue-mid: #185FA5;
+  --amber-bg: #FAEEDA; --amber: #633806;
+  --coral-bg: #FAECE7; --coral: #712B13;
+  --green-bg: #EAF3DE; --green: #27500A;
+  --red-bg: #FCEBEB; --red: #A32D2D;
+  --radius: 10px; --radius-sm: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f0f0e; --surface: #1a1a18; --surface2: #242420;
+    --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.18);
+    --text: #f0efe9; --text2: #a0a098; --text3: #606058;
+    --purple-bg: #26215C; --purple: #AFA9EC;
+    --teal-bg: #04342C; --teal: #5DCAA5;
+    --blue-bg: #042C53; --blue: #85B7EB; --blue-mid: #378ADD;
+    --amber-bg: #412402; --amber: #FAC775;
+    --coral-bg: #4A1B0C; --coral: #F0997B;
+    --green-bg: #173404; --green: #97C459;
+    --red-bg: #501313; --red: #F09595;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.6}
+.page{max-width:920px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.lab-header{border-bottom:1px solid var(--border2);padding-bottom:1.5rem;margin-bottom:2rem}
+.lab-header h1{font-size:26px;font-weight:600;letter-spacing:-0.02em;margin-bottom:0.25rem}
+.lab-header .meta{font-size:13px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem;margin-bottom:1.5rem}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:0.05em;text-transform:uppercase}
+.b-pre{background:var(--purple-bg);color:var(--purple)}
+.b-obj{background:var(--teal-bg);color:var(--teal)}
+.b-proc{background:var(--blue-bg);color:var(--blue)}
+.b-data{background:var(--amber-bg);color:var(--amber)}
+.b-q{background:var(--coral-bg);color:var(--coral)}
+.b-conc{background:var(--green-bg);color:var(--green)}
+.sec-title{font-size:16px;font-weight:600}
+.prelab-q{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem 1.2rem;margin-bottom:1rem;border-left:3px solid var(--purple)}
+.prelab-q .qnum{font-size:11px;font-weight:600;color:var(--purple);margin-bottom:0.4rem;letter-spacing:0.05em;text-transform:uppercase}
+.prelab-q p{font-size:14px;line-height:1.65;color:var(--text)}
+textarea{width:100%;border:1px solid var(--border2);border-radius:var(--radius-sm);padding:0.65rem 0.9rem;font-size:13px;font-family:'IBM Plex Sans',sans-serif;color:var(--text);background:var(--surface);resize:vertical;margin-top:0.5rem;min-height:76px;line-height:1.5}
+textarea:focus{outline:none;border-color:var(--blue-mid);box-shadow:0 0 0 3px rgba(24,95,165,0.12)}
+.btn-sm{font-size:12px;padding:5px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:'IBM Plex Sans',sans-serif;transition:background 0.15s}
+.btn-sm:hover{background:var(--bg)}
+.btn-blue{background:var(--blue-bg);color:var(--blue);border-color:var(--blue-mid)}
+.btn-blue:hover{background:var(--blue-mid);color:#fff}
+.feedback{font-size:12px;margin-top:0.5rem;padding:0.5rem 0.9rem;border-radius:var(--radius-sm);display:none;line-height:1.5}
+.fb-good{background:var(--green-bg);color:var(--green)}
+.fb-hint{background:var(--amber-bg);color:var(--amber)}
+.obj-list{list-style:none;margin-bottom:1rem}
+.obj-list li{font-size:14px;line-height:1.6;padding:0.35rem 0 0.35rem 1.2rem;position:relative;color:var(--text)}
+.obj-list li::before{content:"";position:absolute;left:0;top:0.72rem;width:6px;height:6px;border-radius:50%;background:var(--teal)}
+.sim-wrap{background:#080810;border-radius:var(--radius);padding:1.2rem;margin-bottom:1rem;position:relative}
+canvas#simCanvas{display:block;width:100%;height:auto;border-radius:6px}
+.emit-status{font-size:13px;font-weight:500;padding:5px 14px;border-radius:20px;display:inline-block;margin-bottom:0.8rem}
+.emit-yes{background:var(--green-bg);color:var(--green)}
+.emit-no{background:var(--red-bg);color:var(--red)}
+.ctrl-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+@media(max-width:600px){.ctrl-grid{grid-template-columns:1fr}}
+.ctrl-box{background:var(--surface2);border-radius:var(--radius-sm);padding:0.9rem}
+.ctrl-label{font-size:12px;color:var(--text2);margin-bottom:0.5rem;display:flex;justify-content:space-between;align-items:center}
+.ctrl-val{font-size:13px;font-weight:600;color:var(--text);font-family:'IBM Plex Mono',monospace}
+input[type=range]{width:100%;accent-color:var(--blue-mid)}
+.metal-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:0.5rem}
+.metal-btn{font-size:12px;padding:4px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;transition:all 0.15s;font-family:'IBM Plex Sans',sans-serif}
+.metal-btn.active{background:var(--blue-mid);color:#fff;border-color:var(--blue-mid)}
+.metal-info{font-size:12px;color:var(--text3);margin-top:0.5rem;font-family:'IBM Plex Mono',monospace}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:0.8rem}
+@media(max-width:600px){.metrics{grid-template-columns:repeat(2,1fr)}}
+.metric{background:var(--surface2);border-radius:var(--radius-sm);padding:0.7rem;text-align:center}
+.metric .ml{font-size:11px;color:var(--text3);margin-bottom:0.2rem}
+.metric .mv{font-size:16px;font-weight:600;color:var(--text);font-family:'IBM Plex Mono',monospace}
+.metric .mu{font-size:10px;color:var(--text3)}
+.tab-row{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.tab-btn{font-size:12px;padding:5px 14px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;font-family:'IBM Plex Sans',sans-serif}
+.tab-btn.active{background:var(--blue-mid);color:#fff;border-color:var(--blue-mid)}
+.tab-content{display:none}
+.tab-content.show{display:block}
+.step{background:var(--surface2);border-radius:var(--radius-sm);padding:0.9rem 1rem;margin-bottom:0.7rem;font-size:13px;line-height:1.65;border-left:3px solid var(--blue-mid)}
+.step strong{font-weight:600;color:var(--blue-mid)}
+.info-box{background:var(--blue-bg);border-radius:var(--radius-sm);padding:0.8rem 1rem;font-size:13px;color:var(--blue);margin-bottom:1rem;line-height:1.5}
+.warn-box{background:var(--amber-bg);border-radius:var(--radius-sm);padding:0.8rem 1rem;font-size:13px;color:var(--amber);margin-bottom:1rem;line-height:1.5}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:0.5rem}
+.data-table th{background:var(--surface2);padding:7px 10px;text-align:left;font-weight:600;font-size:11px;color:var(--text2);border-bottom:1px solid var(--border);letter-spacing:0.04em;text-transform:uppercase}
+.data-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+.data-table tr:hover td{background:var(--surface2)}
+.tinput{font-size:12px;padding:3px 6px;border:1px solid var(--border2);border-radius:4px;background:var(--surface);color:var(--text);font-family:'IBM Plex Mono',monospace;width:88px}
+.tinput-wide{width:100%;font-size:12px;padding:3px 6px;border:1px solid var(--border2);border-radius:4px;background:var(--surface);color:var(--text);font-family:'IBM Plex Sans',sans-serif}
+.graph-box{position:relative;width:100%;height:240px;background:var(--surface2);border-radius:var(--radius-sm);margin-top:0.8rem;overflow:hidden}
+canvas.plot{display:block;width:100%;height:100%}
+.reg-result{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem;margin-top:0.8rem;font-size:13px;display:none;font-family:'IBM Plex Mono',monospace;line-height:1.8;color:var(--text2)}
+.reg-result b{color:var(--text);font-weight:600}
+.disc-q{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem 1.2rem;margin-bottom:1rem;border-left:3px solid var(--coral)}
+.disc-q .dnum{font-size:11px;font-weight:600;color:var(--coral);margin-bottom:0.4rem;letter-spacing:0.05em;text-transform:uppercase}
+.disc-q p{font-size:14px;line-height:1.65}
+.analysis-q{margin-top:1rem}
+.analysis-q label{font-size:13px;font-weight:600;color:var(--text);display:block;margin-bottom:0.3rem}
+.checklist{background:var(--surface2);border-radius:var(--radius-sm);padding:1rem 1.2rem;margin-bottom:1rem;font-size:13px}
+.checklist .cl-title{font-weight:600;margin-bottom:0.6rem}
+.checklist ol{padding-left:1.2rem;color:var(--text2);line-height:2}
+.word-row{margin-top:0.6rem;display:flex;align-items:center;gap:12px}
+#wordCount{font-size:12px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="lab-header">
+    <h1>Photoelectric Effect — Virtual Laboratory</h1>
+    <div class="meta">PHY 3xx &nbsp;·&nbsp; Modern Physics Laboratory &nbsp;·&nbsp; University Physics Program</div>
+  </div>
+
+  <!-- PRE-LAB -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="badge b-pre">Pre-Lab</span>
+      <span class="sec-title">Theory &amp; Conceptual Questions</span>
+    </div>
+    <div class="info-box">Complete all pre-lab questions before proceeding. These must be submitted to your TA before you begin the experiment. Show all derivations and reasoning.</div>
+
+    <div class="prelab-q">
+      <div class="qnum">Question 1 — Planck's Quantum Hypothesis</div>
+      <p>Einstein explained the photoelectric effect by proposing that light consists of discrete quanta (photons). Using Planck's relation E = hf, derive an expression for the maximum kinetic energy K<sub>max</sub> of emitted photoelectrons in terms of the photon frequency f, Planck's constant h, and the work function φ of the metal. Explain the physical meaning of each term.</p>
+      <textarea id="pq1" placeholder="Write your derivation here..."></textarea>
+      <button class="btn-sm" onclick="checkPQ(1)">Check answer</button>
+      <div id="fb1" class="feedback"></div>
+    </div>
+
+    <div class="prelab-q">
+      <div class="qnum">Question 2 — Threshold Frequency &amp; Stopping Potential</div>
+      <p>Define the threshold (cutoff) frequency f₀. Derive an expression for it. Then explain the concept of stopping potential V<sub>s</sub>. Show that eV<sub>s</sub> = K<sub>max</sub> = hf − φ. What would a graph of V<sub>s</sub> vs. frequency f look like, and what physical quantities can be extracted from its slope and y-intercept?</p>
+      <textarea id="pq2" placeholder="Write your derivation and graph description here..."></textarea>
+      <button class="btn-sm" onclick="checkPQ(2)">Check answer</button>
+      <div id="fb2" class="feedback"></div>
+    </div>
+
+    <div class="prelab-q">
+      <div class="qnum">Question 3 — Wave vs. Quantum Predictions</div>
+      <p>Classical wave theory predicts that: (a) any frequency of light should eventually eject electrons if intensity is high enough, and (b) K<sub>max</sub> should increase with intensity. Quantum theory predicts the opposite for both. State the quantum predictions clearly, and explain how the photoelectric effect provided decisive evidence against the classical wave model. What role did Einstein's 1905 paper play?</p>
+      <textarea id="pq3" placeholder="Compare classical and quantum predictions..."></textarea>
+      <button class="btn-sm" onclick="checkPQ(3)">Check answer</button>
+      <div id="fb3" class="feedback"></div>
+    </div>
+
+    <div class="prelab-q">
+      <div class="qnum">Question 4 — Work Function &amp; Material Dependence</div>
+      <p>The work function φ depends on the cathode material. Given that the work functions for cesium (Cs), sodium (Na), potassium (K), and platinum (Pt) are approximately 2.1 eV, 2.3 eV, 2.3 eV, and 5.65 eV respectively: (a) Calculate the threshold wavelength for each metal. (b) Which metals can be activated by visible light (400–700 nm)? (c) Why does platinum require UV light? Use h = 6.626 × 10⁻³⁴ J·s and c = 3 × 10⁸ m/s.</p>
+      <textarea id="pq4" placeholder="Show your calculations for each metal..."></textarea>
+      <button class="btn-sm" onclick="checkPQ(4)">Check answer</button>
+      <div id="fb4" class="feedback"></div>
+    </div>
+
+    <div class="prelab-q">
+      <div class="qnum">Question 5 — Millikan's Experiment &amp; Determination of h</div>
+      <p>Robert Millikan measured Planck's constant via the photoelectric effect. He plotted stopping potential V<sub>s</sub> against frequency f for several metals. From the slope of V<sub>s</sub> vs. f, he obtained h/e. If his best-fit line had slope m = 4.124 × 10⁻¹⁵ V·s, calculate h (use e = 1.602 × 10⁻¹⁹ C). Compare your result to the accepted value h = 6.626 × 10⁻³⁴ J·s and compute the percent error. Discuss sources of systematic error in his experiment.</p>
+      <textarea id="pq5" placeholder="Show calculation and error analysis..."></textarea>
+      <button class="btn-sm" onclick="checkPQ(5)">Check answer</button>
+      <div id="fb5" class="feedback"></div>
+    </div>
+
+    <div class="prelab-q">
+      <div class="qnum">Question 6 — Photon Momentum &amp; de Broglie Wavelength</div>
+      <p>A photon has momentum p = h/λ = hf/c. (a) Compute the momentum of a UV photon with λ = 200 nm. (b) If this photon ejects an electron from sodium (φ = 2.3 eV), what is the maximum speed of the emitted electron? (c) Calculate the de Broglie wavelength of that electron. (d) Is relativistic treatment necessary? Justify using v/c.</p>
+      <textarea id="pq6" placeholder="Show all calculations with units..."></textarea>
+      <button class="btn-sm" onclick="checkPQ(6)">Check answer</button>
+      <div id="fb6" class="feedback"></div>
+    </div>
+  </div>
+
+  <!-- OBJECTIVES -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="badge b-obj">Objectives</span>
+      <span class="sec-title">Lab Objectives</span>
+    </div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:1rem">The following are the standard objectives for this experiment. In the field below, rewrite them in your own words and add any additional objectives you expect to achieve.</p>
+    <ul class="obj-list">
+      <li>Verify that the photoelectric effect occurs only above a threshold frequency, independent of light intensity.</li>
+      <li>Measure the stopping potential V<sub>s</sub> as a function of light frequency f for multiple metals.</li>
+      <li>Determine Planck's constant h from the slope of the V<sub>s</sub> vs. f graph and compare to the accepted value.</li>
+      <li>Determine the work function φ of different metals from the y-intercept of the V<sub>s</sub> vs. f graph.</li>
+      <li>Investigate how light intensity affects the photocurrent but not the stopping potential.</li>
+      <li>Analyze the energy budget of the photoelectric process and identify threshold wavelengths.</li>
+    </ul>
+    <label style="font-size:13px;color:var(--text2)">Your paraphrased objectives (in your own words):</label>
+    <textarea placeholder="Restate the lab objectives in your own words. Add any additional specific goals you have for this lab..." style="min-height:100px"></textarea>
+  </div>
+
+  <!-- PROCEDURE + SIMULATION -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="badge b-proc">Procedure</span>
+      <span class="sec-title">Experimental Procedure &amp; Simulation</span>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('sim',this)">Simulation</button>
+      <button class="tab-btn" onclick="switchTab('proc',this)">Step-by-step procedure</button>
+    </div>
+
+    <!-- SIMULATION -->
+    <div id="tab-sim" class="tab-content show">
+      <div class="sim-wrap">
+        <canvas id="simCanvas" width="860" height="260"></canvas>
+      </div>
+      <div id="emitStatus" class="emit-status emit-no">No emission — below threshold frequency</div>
+      <div class="ctrl-grid">
+        <div class="ctrl-box">
+          <div class="ctrl-label">Light frequency <span class="ctrl-val" id="freqVal">6.00 × 10¹⁴ Hz</span></div>
+          <input type="range" id="freqSlider" min="4" max="12" step="0.05" value="6" oninput="updateSim()">
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">IR ←——————————————→ UV</div>
+          <div class="ctrl-label" style="margin-top:0.8rem">Wavelength <span class="ctrl-val" id="waveVal">500 nm</span></div>
+        </div>
+        <div class="ctrl-box">
+          <div class="ctrl-label">Light intensity <span class="ctrl-val" id="intVal">50%</span></div>
+          <input type="range" id="intSlider" min="10" max="100" step="5" value="50" oninput="updateSim()">
+          <div class="ctrl-label" style="margin-top:0.8rem">Stopping potential <span class="ctrl-val" id="stopVal">— V</span></div>
+          <div class="ctrl-label">Photocurrent <span class="ctrl-val" id="currVal">— µA</span></div>
+        </div>
+      </div>
+      <div class="ctrl-box" style="margin-bottom:1rem">
+        <div class="ctrl-label" style="margin-bottom:0.5rem">Cathode material</div>
+        <div class="metal-row" id="metalRow">
+          <button class="metal-btn active" onclick="selectMetal('Na',this)">Sodium (Na)</button>
+          <button class="metal-btn" onclick="selectMetal('K',this)">Potassium (K)</button>
+          <button class="metal-btn" onclick="selectMetal('Cs',this)">Cesium (Cs)</button>
+          <button class="metal-btn" onclick="selectMetal('Zn',this)">Zinc (Zn)</button>
+          <button class="metal-btn" onclick="selectMetal('Pt',this)">Platinum (Pt)</button>
+        </div>
+        <div class="metal-info" id="metalInfo">Na: φ = 2.30 eV | λ₀ = 540 nm | f₀ = 5.56 × 10¹⁴ Hz</div>
+      </div>
+      <div class="metrics">
+        <div class="metric"><div class="ml">Photon energy</div><div class="mv" id="mEph">—</div><div class="mu">eV</div></div>
+        <div class="metric"><div class="ml">Work function φ</div><div class="mv" id="mPhi">2.30</div><div class="mu">eV</div></div>
+        <div class="metric"><div class="ml">K<sub>max</sub></div><div class="mv" id="mKmax">0</div><div class="mu">eV</div></div>
+        <div class="metric"><div class="ml">Stopping potential</div><div class="mv" id="mVs">—</div><div class="mu">V</div></div>
+      </div>
+    </div>
+
+    <!-- PROCEDURE STEPS -->
+    <div id="tab-proc" class="tab-content">
+      <div class="warn-box">Read all steps before beginning. Record your data in Section 4 (Data Collection). Do not advance to the next step until your TA has verified your current measurements.</div>
+      <div class="step"><strong>Task 1 — Familiarization (5 min)</strong><br>Open the simulation tab. Set the metal to sodium. Set intensity to 50%. Slowly sweep the frequency slider from 4 × 10¹⁴ Hz to 12 × 10¹⁴ Hz. Observe when emission begins, the color of the light, and how K<sub>max</sub> changes. Record qualitative observations in Table 1.</div>
+      <div class="step"><strong>Task 2 — Threshold frequency measurement (10 min)</strong><br>For each metal (Na, K, Cs, Zn, Pt), find the minimum frequency at which emission begins. Record this threshold frequency f₀ in Table 2. Calculate the experimental work function φ = hf₀ for each metal (use h = 4.136 × 10⁻¹⁵ eV·s). Compare to accepted values and compute percent error.</div>
+      <div class="step"><strong>Task 3 — Stopping potential vs. frequency (15 min)</strong><br>Using sodium, vary the frequency from just above threshold to 12 × 10¹⁴ Hz in steps of ~0.5 × 10¹⁴ Hz (at least 8 data points). Record V<sub>s</sub> and f in Table 3. In the analysis section, plot V<sub>s</sub> vs. f and perform a linear regression. Extract h from the slope and φ from the intercept.</div>
+      <div class="step"><strong>Task 4 — Effect of intensity (10 min)</strong><br>Set frequency to 8.0 × 10¹⁴ Hz with sodium. Vary intensity from 10% to 100% in steps of 10%. For each intensity, record: (a) the photocurrent and (b) the stopping potential. Enter data in Table 4. Do your results confirm the quantum model?</div>
+      <div class="step"><strong>Task 5 — Multi-metal comparison (10 min)</strong><br>Set frequency to 9.0 × 10¹⁴ Hz. For each metal, record V<sub>s</sub> and K<sub>max</sub>. Plot K<sub>max</sub> vs. metal work function. Explain the trend. Which metal has the most energetic emitted electrons at this frequency? Why?</div>
+      <div class="step"><strong>Task 6 — Planck's constant determination</strong><br>Using data from Task 3, perform least-squares linear regression on V<sub>s</sub> vs. f. The slope equals h/e. Calculate h and compare to accepted value. Report your percent error and discuss systematic uncertainties.</div>
+    </div>
+  </div>
+
+  <!-- DATA COLLECTION -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="badge b-data">Data &amp; Analysis</span>
+      <span class="sec-title">Data Collection, Tables &amp; Analysis</span>
+    </div>
+
+    <p style="font-size:13px;font-weight:600;margin-bottom:0.6rem">Table 2 — Threshold frequency &amp; work function by metal</p>
+    <table class="data-table">
+      <thead><tr><th>Metal</th><th>φ accepted (eV)</th><th>f₀ measured (×10¹⁴ Hz)</th><th>φ exp = hf₀ (eV)</th><th>% Error</th></tr></thead>
+      <tbody>
+        <tr><td>Sodium (Na)</td><td>2.30</td><td><input type="number" class="tinput" step="0.01" id="na_f0"></td><td id="na_phi">—</td><td id="na_err">—</td></tr>
+        <tr><td>Potassium (K)</td><td>2.30</td><td><input type="number" class="tinput" step="0.01" id="k_f0"></td><td id="k_phi">—</td><td id="k_err">—</td></tr>
+        <tr><td>Cesium (Cs)</td><td>2.10</td><td><input type="number" class="tinput" step="0.01" id="cs_f0"></td><td id="cs_phi">—</td><td id="cs_err">—</td></tr>
+        <tr><td>Zinc (Zn)</td><td>4.30</td><td><input type="number" class="tinput" step="0.01" id="zn_f0"></td><td id="zn_phi">—</td><td id="zn_err">—</td></tr>
+        <tr><td>Platinum (Pt)</td><td>5.65</td><td><input type="number" class="tinput" step="0.01" id="pt_f0"></td><td id="pt_phi">—</td><td id="pt_err">—</td></tr>
+      </tbody>
+    </table>
+    <button class="btn-sm" style="margin-top:0.7rem" onclick="calcMetalTable()">Calculate φ &amp; % error</button>
+
+    <p style="font-size:13px;font-weight:600;margin:1.3rem 0 0.6rem">Table 3 — Stopping potential vs. frequency (Na cathode)</p>
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Frequency (×10¹⁴ Hz)</th><th>V<sub>s</sub> (V)</th><th>K<sub>max</sub> = eV<sub>s</sub> (eV)</th><th>Action</th></tr></thead>
+      <tbody id="vsBody"></tbody>
+    </table>
+    <div style="display:flex;gap:8px;margin-top:0.7rem;flex-wrap:wrap">
+      <button class="btn-sm" onclick="addVsRow()">+ Add row</button>
+      <button class="btn-sm btn-blue" onclick="recordFromSim()">Record from simulation</button>
+    </div>
+
+    <p style="font-size:13px;font-weight:600;margin:1.3rem 0 0.5rem">V<sub>s</sub> vs. frequency — live graph</p>
+    <div class="graph-box"><canvas class="plot" id="plotCanvas" width="860" height="240"></canvas></div>
+    <button class="btn-sm" onclick="drawPlot()" style="margin-top:0.7rem">Update graph &amp; regression</button>
+    <div id="regResult" class="reg-result"></div>
+
+    <p style="font-size:13px;font-weight:600;margin:1.3rem 0 0.6rem">Table 4 — Photocurrent vs. intensity (f = 8.0 × 10¹⁴ Hz, Na)</p>
+    <table class="data-table">
+      <thead><tr><th>Intensity (%)</th><th>Photocurrent (µA)</th><th>Stopping potential (V)</th><th>Observation</th></tr></thead>
+      <tbody>
+        <tr><td>10</td><td><input type="number" class="tinput" step="0.1"></td><td><input type="number" class="tinput" step="0.01"></td><td><input type="text" class="tinput-wide"></td></tr>
+        <tr><td>30</td><td><input type="number" class="tinput" step="0.1"></td><td><input type="number" class="tinput" step="0.01"></td><td><input type="text" class="tinput-wide"></td></tr>
+        <tr><td>50</td><td><input type="number" class="tinput" step="0.1"></td><td><input type="number" class="tinput" step="0.01"></td><td><input type="text" class="tinput-wide"></td></tr>
+        <tr><td>80</td><td><input type="number" class="tinput" step="0.1"></td><td><input type="number" class="tinput" step="0.01"></td><td><input type="text" class="tinput-wide"></td></tr>
+        <tr><td>100</td><td><input type="number" class="tinput" step="0.1"></td><td><input type="number" class="tinput" step="0.01"></td><td><input type="text" class="tinput-wide"></td></tr>
+      </tbody>
+    </table>
+
+    <div class="analysis-q" style="margin-top:1.2rem">
+      <label>Analysis 1 — From your regression, state your experimental value of Planck's constant h, including units and percent error from the accepted value (6.626 × 10⁻³⁴ J·s):</label>
+      <textarea placeholder="h_exp = slope × e = ... J·s. Percent error = |h_exp − h_acc| / h_acc × 100% = ..."></textarea>
+    </div>
+    <div class="analysis-q">
+      <label>Analysis 2 — From your intensity data (Table 4), what happens to V<sub>s</sub> as intensity changes? Does this confirm the quantum or classical model? Cite your data explicitly.</label>
+      <textarea placeholder="When intensity was changed from ___ to ___, V_s changed from ___ to ___. This confirms/contradicts the quantum model because..."></textarea>
+    </div>
+    <div class="analysis-q">
+      <label>Analysis 3 — Using your threshold frequency data, rank the metals by work function. Identify which metals can be activated by visible light. Explain the relationship between work function and threshold wavelength.</label>
+      <textarea placeholder="Ranked from lowest to highest work function:... Metals activated by visible light:..."></textarea>
+    </div>
+  </div>
+
+  <!-- DISCUSSION QUESTIONS -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="badge b-q">Questions</span>
+      <span class="sec-title">Post-Lab Discussion Questions</span>
+    </div>
+    <div class="disc-q">
+      <div class="dnum">Question 1</div>
+      <p>In your stopping potential vs. frequency graph, the slope is h/e. Why is it h/e and not just h? How does this allow you to determine h if e is known? What would happen to the slope if you repeated the experiment with a different metal? Justify with equations.</p>
+      <textarea placeholder="The slope is h/e because... If the metal is changed, the slope would/would not change because..."></textarea>
+    </div>
+    <div class="disc-q">
+      <div class="dnum">Question 2</div>
+      <p>You observe that doubling the light intensity doubles the photocurrent but does not change the stopping potential. Explain this result using the photon model. What does the photocurrent depend on physically? What does the stopping potential depend on? Would a classical wave physicist have predicted this?</p>
+      <textarea placeholder="Photocurrent depends on... because... Stopping potential depends on... because... Classical prediction would have been..."></textarea>
+    </div>
+    <div class="disc-q">
+      <div class="dnum">Question 3</div>
+      <p>In real photoelectric experiments, the photocurrent does not drop to exactly zero at the stopping potential — there is a small "dark current." Propose at least two physical mechanisms that could cause electrons to reach the anode even when V ≥ V<sub>s</sub>.</p>
+      <textarea placeholder="Mechanism 1:... Mechanism 2:..."></textarea>
+    </div>
+    <div class="disc-q">
+      <div class="dnum">Question 4</div>
+      <p>The work function values for the same metal can vary significantly depending on its surface preparation, crystal orientation, and contamination. Sodium's work function ranges from about 2.1 to 2.75 eV depending on surface conditions. How would this affect your measurement of the y-intercept in the V<sub>s</sub> vs. f graph? How does it affect the slope (and thus your determination of h)?</p>
+      <textarea placeholder="The y-intercept would... because the y-intercept equals -φ/e. The slope would... because..."></textarea>
+    </div>
+    <div class="disc-q">
+      <div class="dnum">Question 5</div>
+      <p>The photoelectric effect is used in photomultiplier tubes (PMTs), solar cells, and digital camera sensors. Choose one application and explain how the photoelectric effect is exploited in its operation. What material properties are optimized, and why?</p>
+      <textarea placeholder="Application chosen:... The photoelectric effect is exploited by... The material is chosen because..."></textarea>
+    </div>
+    <div class="disc-q">
+      <div class="dnum">Question 6 — Extension</div>
+      <p>Compton scattering (1923) further confirmed the photon model by showing that X-ray photons have momentum p = h/λ. Compare Compton scattering and the photoelectric effect as evidence for photon particle behavior. Why was the photoelectric effect insufficient alone to convince the physics community?</p>
+      <textarea placeholder="Both effects demonstrate... The photoelectric effect alone was insufficient because... Compton scattering added evidence by..."></textarea>
+    </div>
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="section">
+    <div class="sec-head">
+      <span class="badge b-conc">Conclusion</span>
+      <span class="sec-title">Conclusion</span>
+    </div>
+    <div class="info-box">Your conclusion should be 300–500 words. Address each item below explicitly. Do not simply restate the procedure.</div>
+    <div class="checklist">
+      <div class="cl-title">Your conclusion must address:</div>
+      <ol>
+        <li>Were the lab objectives met? Cite specific numerical results.</li>
+        <li>State your experimental value of h and percent error. Is this within acceptable experimental uncertainty?</li>
+        <li>Did your data confirm or refute the quantum model of light? Be explicit about what the intensity experiment showed.</li>
+        <li>Identify at least two sources of systematic error and discuss their effect on your results.</li>
+        <li>Suggest one specific improvement to the experiment that would reduce systematic error.</li>
+      </ol>
+    </div>
+    <textarea id="conclusion" placeholder="Write your conclusion here (aim for 300–500 words)..." style="min-height:200px" oninput="countWords()"></textarea>
+    <div class="word-row">
+      <button class="btn-sm" onclick="checkConclusion()">Check length &amp; completeness</button>
+      <span id="wordCount">0 words</span>
+    </div>
+    <div id="concFb" class="feedback"></div>
+  </div>
+
+</div>
+
+<script>
+const h_eV = 4.136e-15;
+const metals = {
+  Na:{phi:2.30,name:'Sodium (Na)'},
+  K:{phi:2.30,name:'Potassium (K)'},
+  Cs:{phi:2.10,name:'Cesium (Cs)'},
+  Zn:{phi:4.30,name:'Zinc (Zn)'},
+  Pt:{phi:5.65,name:'Platinum (Pt)'}
+};
+let currentMetal = 'Na';
+let simState = {freq:6,intensity:50,emitting:false,Ephoton:0,Kmax:0,Vs:0,current:0};
+let animFrame = 0;
+let animRunning = false;
+
+function freqToColor(f14) {
+  const nm = 3e8/(f14*1e14)*1e9;
+  if(nm>700)return'#ff5500';
+  if(nm>620)return'#ff2200';
+  if(nm>590)return'#ff8800';
+  if(nm>570)return'#ffcc00';
+  if(nm>495)return'#33dd00';
+  if(nm>450)return'#0055ff';
+  if(nm>380)return'#7700ee';
+  return'#cc00ff';
+}
+
+function updateSim() {
+  const f14 = parseFloat(document.getElementById('freqSlider').value);
+  const intensity = parseInt(document.getElementById('intSlider').value);
+  const phi = metals[currentMetal].phi;
+  const f0_14 = phi/h_eV/1e14;
+  const nm = Math.round(3e8/(f14*1e14)*1e9);
+  const Ephoton = h_eV*f14*1e14;
+  const Kmax = Math.max(0,Ephoton-phi);
+  const emitting = f14 >= f0_14;
+  const Vs = emitting ? Kmax.toFixed(3) : '0';
+  const current = emitting ? (intensity/100*f14*2).toFixed(2) : '0';
+  simState = {freq:f14,intensity,emitting,Ephoton,Kmax,Vs:parseFloat(Vs),current};
+
+  document.getElementById('freqVal').textContent = f14.toFixed(2)+' × 10¹⁴ Hz';
+  document.getElementById('waveVal').textContent = nm+' nm';
+  document.getElementById('intVal').textContent = intensity+'%';
+  document.getElementById('stopVal').textContent = emitting ? Vs+' V' : '—';
+  document.getElementById('currVal').textContent = emitting ? current+' µA' : '—';
+  document.getElementById('mEph').textContent = Ephoton.toFixed(3);
+  document.getElementById('mPhi').textContent = phi.toFixed(2);
+  document.getElementById('mKmax').textContent = emitting ? Kmax.toFixed(3) : '0';
+  document.getElementById('mVs').textContent = emitting ? Vs : '—';
+
+  const st = document.getElementById('emitStatus');
+  if(emitting) {
+    st.className='emit-status emit-yes';
+    st.textContent='Emission active — Kmax = '+Kmax.toFixed(3)+' eV, Vs = '+Vs+' V';
+  } else {
+    st.className='emit-status emit-no';
+    st.textContent='No emission — photon energy ('+Ephoton.toFixed(3)+' eV) < work function ('+phi.toFixed(2)+' eV)';
+  }
+  if(!animRunning){animRunning=true;drawSim();}
+}
+
+function drawSim() {
+  const canvas = document.getElementById('simCanvas');
+  if(!canvas){animRunning=false;return;}
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#080810';ctx.fillRect(0,0,W,H);
+
+  const cathX=170,anodeX=W-170,midY=H/2;
+  ctx.fillStyle='#1a1a38';
+  ctx.fillRect(cathX-14,55,28,H-110);
+  ctx.fillRect(anodeX-14,55,28,H-110);
+  ctx.fillStyle='#4a4a6a';ctx.font='11px IBM Plex Mono,monospace';
+  ctx.fillText('Cathode (–)',cathX-38,44);
+  ctx.fillText('Anode (+)',anodeX-32,44);
+
+  const col=freqToColor(simState.freq);
+  const nBeams=Math.round(simState.intensity/20)+2;
+  for(let i=0;i<nBeams;i++){
+    const yy=80+(i/(nBeams-1||1))*(H-170);
+    const grad=ctx.createLinearGradient(20,yy,cathX,yy);
+    grad.addColorStop(0,'transparent');grad.addColorStop(0.7,col+'88');grad.addColorStop(1,col);
+    ctx.save();ctx.strokeStyle=grad;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(20,yy);ctx.lineTo(cathX,yy);ctx.stroke();ctx.restore();
+    const px=(20+(animFrame*1.8)%40);
+    ctx.save();ctx.globalAlpha=0.9;ctx.fillStyle=col;
+    ctx.beginPath();ctx.arc(px,yy,2.5,0,Math.PI*2);ctx.fill();ctx.restore();
+  }
+  ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='11px IBM Plex Mono,monospace';
+  ctx.fillText('\u03bb = '+Math.round(3e8/(simState.freq*1e14)*1e9)+' nm',24,H-18);
+
+  if(simState.emitting){
+    const nEl=Math.round(simState.intensity/15)+1;
+    for(let i=0;i<nEl;i++){
+      const t=((animFrame*0.012+i/nEl)%1);
+      const ex=cathX+14+t*(anodeX-cathX-30);
+      const ey=80+(i/(nEl-1||1))*(H-170)+Math.sin(t*Math.PI*3+i*1.3)*14;
+      ctx.save();ctx.globalAlpha=0.95-t*0.25;
+      ctx.fillStyle='#55ccff';ctx.strokeStyle='#aaeeff';ctx.lineWidth=0.8;
+      ctx.beginPath();ctx.arc(ex,ey,3.5,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.restore();
+      if(t<0.1){
+        ctx.save();ctx.globalAlpha=0.5;ctx.strokeStyle='#ffaa00';ctx.lineWidth=1.2;
+        ctx.beginPath();ctx.moveTo(cathX+6,ey-10);ctx.lineTo(cathX+22,ey);
+        ctx.moveTo(cathX+6,ey+10);ctx.lineTo(cathX+22,ey);ctx.stroke();ctx.restore();
+      }
+    }
+  }
+
+  const mX=W/2,mY=H-34;
+  ctx.fillStyle='#0d0d20';ctx.strokeStyle='#333355';ctx.lineWidth=1;
+  ctx.beginPath();
+  if(ctx.roundRect){ctx.roundRect(mX-80,mY-17,160,34,7);}
+  else{ctx.rect(mX-80,mY-17,160,34);}
+  ctx.fill();ctx.stroke();
+  ctx.font='11px IBM Plex Mono,monospace';
+  ctx.fillStyle='#55ccff';ctx.fillText('I = '+(simState.emitting?simState.current:'0.00')+' \u00b5A',mX-72,mY+3);
+  ctx.fillStyle='#ffcc44';ctx.fillText('Vs = '+(simState.emitting?simState.Vs.toFixed(3):'—')+' V',mX+8,mY+3);
+
+  ctx.font='500 12px IBM Plex Sans,sans-serif';ctx.fillStyle='rgba(255,255,255,0.5)';
+  ctx.textAlign='center';ctx.fillText(metals[currentMetal].name+' | \u03c6 = '+metals[currentMetal].phi.toFixed(2)+' eV',W/2,18);ctx.textAlign='left';
+
+  animFrame++;
+  requestAnimationFrame(drawSim);
+}
+
+function selectMetal(m,btn){
+  currentMetal=m;
+  document.querySelectorAll('.metal-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const phi=metals[m].phi;
+  const f0=phi/h_eV/1e14;
+  const lam=Math.round(3e8/(f0*1e14)*1e9);
+  document.getElementById('metalInfo').textContent=m+': \u03c6 = '+phi.toFixed(2)+' eV | \u03bb\u2080 = '+lam+' nm | f\u2080 = '+f0.toFixed(2)+' \u00d7 10\u00b9\u2074 Hz';
+  updateSim();
+}
+
+function switchTab(t,btn){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('show'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('show');
+  btn.classList.add('active');
+}
+
+function addVsRow(){
+  const tbody=document.getElementById('vsBody');
+  const n=tbody.rows.length+1;
+  const tr=document.createElement('tr');
+  tr.innerHTML='<td>'+n+'</td>'+
+    '<td><input type="number" class="tinput" step="0.05" class="fInp"></td>'+
+    '<td><input type="number" class="tinput" step="0.001" class="vInp"></td>'+
+    '<td class="kval">—</td>'+
+    '<td><button class="btn-sm" onclick="calcRow(this)">Calc</button></td>';
+  tbody.appendChild(tr);
+}
+
+function calcRow(btn){
+  const row=btn.closest('tr');
+  const v=parseFloat(row.cells[2].querySelector('input').value);
+  if(!isNaN(v))row.querySelector('.kval').textContent=v.toFixed(3);
+}
+
+function recordFromSim(){
+  if(!simState.emitting){alert('No emission at current frequency. Increase frequency above threshold.');return;}
+  const tbody=document.getElementById('vsBody');
+  const n=tbody.rows.length+1;
+  const tr=document.createElement('tr');
+  tr.style.background='rgba(24,95,165,0.08)';
+  tr.innerHTML='<td>'+n+'</td>'+
+    '<td><input type="number" class="tinput" step="0.05" value="'+simState.freq.toFixed(2)+'"></td>'+
+    '<td><input type="number" class="tinput" step="0.001" value="'+simState.Vs.toFixed(3)+'"></td>'+
+    '<td class="kval">'+simState.Vs.toFixed(3)+'</td>'+
+    '<td><button class="btn-sm" onclick="calcRow(this)">Calc</button></td>';
+  tbody.appendChild(tr);
+}
+
+function drawPlot(){
+  const rows=document.querySelectorAll('#vsBody tr');
+  const pts=[];
+  rows.forEach(r=>{
+    const inputs=r.querySelectorAll('input');
+    const f=parseFloat(inputs[0]?.value);
+    const v=parseFloat(inputs[1]?.value);
+    if(!isNaN(f)&&!isNaN(v))pts.push({f,v});
+  });
+  if(pts.length<2){alert('Need at least 2 data points.');return;}
+  const canvas=document.getElementById('plotCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  const pad={l:60,r:30,t:20,b:44};
+  ctx.clearRect(0,0,W,H);
+  const isDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+  ctx.fillStyle=isDark?'#1a1a18':'#f0efe9';ctx.fillRect(0,0,W,H);
+  const fMin=Math.min(...pts.map(p=>p.f))-0.5,fMax=Math.max(...pts.map(p=>p.f))+0.5;
+  const vMin=Math.min(0,...pts.map(p=>p.v))-0.15,vMax=Math.max(...pts.map(p=>p.v))+0.3;
+  const scX=f=>pad.l+(f-fMin)/(fMax-fMin)*(W-pad.l-pad.r);
+  const scY=v=>H-pad.b-(v-vMin)/(vMax-vMin)*(H-pad.t-pad.b);
+  const gc=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.07)';
+  const tc=isDark?'#666':'#aaa';
+  ctx.strokeStyle=gc;ctx.lineWidth=0.8;
+  for(let i=0;i<=5;i++){
+    const y=pad.t+i*(H-pad.t-pad.b)/5;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    const v=(vMax-(vMax-vMin)*i/5).toFixed(2);
+    ctx.fillStyle=tc;ctx.font='10px IBM Plex Mono,monospace';ctx.textAlign='right';
+    ctx.fillText(v,pad.l-6,y+3);
+  }
+  ctx.textAlign='center';
+  for(let i=0;i<=5;i++){
+    const x=pad.l+i*(W-pad.l-pad.r)/5;
+    ctx.fillStyle=tc;ctx.font='10px IBM Plex Mono,monospace';
+    ctx.fillText((fMin+(fMax-fMin)*i/5).toFixed(1),x,H-pad.b+14);
+  }
+  ctx.strokeStyle=isDark?'#444':'#ccc';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,H-pad.b);ctx.lineTo(W-pad.r,H-pad.b);ctx.stroke();
+  const axc=isDark?'#999':'#666';
+  ctx.fillStyle=axc;ctx.font='11px IBM Plex Sans,sans-serif';ctx.textAlign='center';
+  ctx.fillText('Frequency (×10¹⁴ Hz)',W/2,H-4);
+  ctx.save();ctx.translate(14,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('Stopping potential (V)',0,0);ctx.restore();
+
+  const n=pts.length,sumF=pts.reduce((s,p)=>s+p.f,0),sumV=pts.reduce((s,p)=>s+p.v,0);
+  const mF=sumF/n,mV=sumV/n;
+  const ssF=pts.reduce((s,p)=>s+(p.f-mF)**2,0);
+  const sFV=pts.reduce((s,p)=>s+(p.f-mF)*(p.v-mV),0);
+  const slope=sFV/ssF,intercept=mV-slope*mF;
+  const fRange=[fMin,fMax];
+  ctx.strokeStyle='#185FA5';ctx.lineWidth=2;ctx.setLineDash([6,3]);
+  ctx.beginPath();ctx.moveTo(scX(fRange[0]),scY(slope*fRange[0]+intercept));ctx.lineTo(scX(fRange[1]),scY(slope*fRange[1]+intercept));ctx.stroke();
+  ctx.setLineDash([]);
+  pts.forEach(p=>{
+    ctx.fillStyle='#D85A30';ctx.strokeStyle=isDark?'#0f0f0e':'#fff';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(scX(p.f),scY(p.v),5,0,Math.PI*2);ctx.fill();ctx.stroke();
+  });
+
+  const h_exp=slope*1.602e-19;
+  const pErr=Math.abs((h_exp-6.626e-34)/6.626e-34*100).toFixed(2);
+  const reg=document.getElementById('regResult');
+  reg.style.display='block';
+  reg.innerHTML='Slope = h/e = <b>'+slope.toFixed(4)+' × 10⁻¹⁵ V·s</b><br>'+
+    'y-intercept = −φ/e = <b>'+intercept.toFixed(3)+' V</b>  →  φ = <b>'+(−intercept).toFixed(3)+' eV</b><br>'+
+    'h<sub>exp</sub> = slope × e = <b>'+h_exp.toExponential(3)+' J·s</b><br>'+
+    'h<sub>accepted</sub> = 6.626 × 10⁻³⁴ J·s  |  Percent error = <b>'+pErr+'%</b>';
+}
+
+function calcMetalTable(){
+  const data={na:{acc:2.30},k:{acc:2.30},cs:{acc:2.10},zn:{acc:4.30},pt:{acc:5.65}};
+  ['na','k','cs','zn','pt'].forEach(m=>{
+    const el=document.getElementById(m+'_f0');
+    if(!el)return;
+    const f0=parseFloat(el.value);
+    if(!isNaN(f0)){
+      const phi_exp=h_eV*f0*1e14;
+      const err=Math.abs((phi_exp-data[m].acc)/data[m].acc*100).toFixed(1);
+      document.getElementById(m+'_phi').textContent=phi_exp.toFixed(3);
+      document.getElementById(m+'_err').textContent=err+'%';
+    }
+  });
+}
+
+const hints={
+  1:'Key points: K_max = hf − φ, where hf = photon energy, φ = work function (minimum energy to release an electron). K_max ≥ 0 only when hf ≥ φ. Emission is instantaneous; no time delay.',
+  2:'f₀ = φ/h (threshold frequency). The stopping potential V_s satisfies eV_s = K_max. The V_s vs. f graph is linear: slope = h/e (same for all metals), y-intercept = −φ/e (metal-dependent).',
+  3:'Quantum: (1) no emission below f₀ regardless of intensity; (2) K_max = hf − φ, independent of intensity; (3) instantaneous emission. Classical wave model fails all three. Einstein 1905 treated light as quanta.',
+  4:'λ₀ = hc/φ. Na: 540 nm, K: 540 nm, Cs: 592 nm, Zn: 289 nm, Pt: 220 nm. Na, K, Cs lie in visible range. Pt requires UV because its large work function (5.65 eV) requires photons with λ < 220 nm.',
+  5:'h = slope × e = 4.124×10⁻¹⁵ × 1.602×10⁻¹⁹ = 6.607×10⁻³⁴ J·s. % error = |6.607−6.626|/6.626 × 100 ≈ 0.29%. Systematic errors: contact potential between metals, surface contamination, stray light.',
+  6:'p = h/λ = 6.626×10⁻³⁴/200×10⁻⁹ = 3.31×10⁻²⁷ kg·m/s. K_max = hc/λ − φ = 6.21−2.30 = 3.91 eV. v_max = √(2K/m_e) ≈ 1.17×10⁶ m/s. v/c ≈ 0.004, so non-relativistic treatment is valid.'
+};
+
+function checkPQ(n){
+  const ans=document.getElementById('pq'+n).value.trim();
+  const fb=document.getElementById('fb'+n);
+  fb.style.display='block';
+  if(ans.length<30){
+    fb.className='feedback fb-hint';fb.textContent='Answer too brief. Expand your reasoning with equations and explanations.';
+  } else {
+    fb.className='feedback fb-good';fb.innerHTML='<b>Key points &amp; hint:</b> '+hints[n];
+  }
+}
+
+function countWords(){
+  const t=document.getElementById('conclusion').value.trim();
+  const w=t?t.split(/\s+/).length:0;
+  document.getElementById('wordCount').textContent=w+' words';
+}
+
+function checkConclusion(){
+  const text=document.getElementById('conclusion').value;
+  const words=text.trim().split(/\s+/).filter(w=>w.length>0).length;
+  document.getElementById('wordCount').textContent=words+' words';
+  const fb=document.getElementById('concFb');
+  fb.style.display='block';
+  const checks=['h_exp','percent','quantum','intensity','systematic','error'];
+  const missing=checks.filter(k=>!text.toLowerCase().includes(k));
+  if(words<200){
+    fb.className='feedback fb-hint';fb.textContent='Too short. Aim for 300–500 words.';
+  } else if(missing.length>2){
+    fb.className='feedback fb-hint';fb.textContent='Missing topics: '+missing.join(', ')+'. Address all required checklist items.';
+  } else {
+    fb.className='feedback fb-good';fb.textContent='Good length and coverage. Review for numerical specificity before submitting.';
+  }
+}
+
+updateSim();
+setTimeout(()=>{addVsRow();addVsRow();addVsRow();},50);
+</script>
+</body>
+</html>
